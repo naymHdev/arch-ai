@@ -9,6 +9,9 @@
     "build": "tsc",
     "start": "node dist/cli/index.js"
   },
+  "bin": {
+    "arch-ai": "dist/cli/index.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
