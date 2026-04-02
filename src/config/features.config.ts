@@ -1,8 +1,7 @@
-import { FeatureConfig, FeatureId } from "../types";
 
-// ─────────────────────────────────────────────
-// Features Configuration
-// ─────────────────────────────────────────────
+
+import { FeatureConfig } from "../types";
+import { FeatureId } from "../types";
 
 export const FEATURES: Record<FeatureId, FeatureConfig> = {
   auth: {

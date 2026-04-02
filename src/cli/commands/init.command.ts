@@ -1,24 +1,12 @@
 import path from "path";
 import chalk from "chalk";
 import inquirer from "inquirer";
-import {
-  ProjectConfig,
-  TemplateId,
-  FeatureId,
-  PackageManager,
-} from "../../types";
 import { TEMPLATES } from "../../config/templates.config";
-import { FEATURES } from "../../config/features.config";
-import { TEMPLATE_LABELS, FEATURE_LABELS } from "../../constants";
-import { logger } from "../../utils/logger";
-import { sanitizeProjectName } from "../../utils/file";
-import {
-  createSpinner,
-  spinnerSuccess,
-  spinnerFail,
-} from "../../utils/spinner";
+import { createSpinner, spinnerFail, spinnerSuccess } from "../../utils/spinner";
 import { aiService } from "../../ai/ai.service";
-import { runInit } from "../../core/init";
+import { sanitizeProjectName } from "../../utils/file";
+import { TemplateId } from "../../types";
+import { FeatureId } from "../../types";
 
 // ─────────────────────────────────────────────
 // Init Command
