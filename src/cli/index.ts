@@ -2,7 +2,7 @@ import { Command } from "commander";
 import chalk from "chalk";
 import gradient from "gradient-string";
 import { initCommand } from "./commands/init.command";
-import { VERSION, CLI_NAME } from "../constants";
+import { CLI_NAME, VERSION } from "../constants";
 
 // ─────────────────────────────────────────────
 // ArchAI CLI Entry Point
