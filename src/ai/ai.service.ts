@@ -2,7 +2,6 @@ import Anthropic from "@anthropic-ai/sdk";
 import { AIProjectSuggestion, TemplateId, FeatureId } from "../types";
 import { buildSuggestionPrompt } from "./ai.prompts";
 import { parseAISuggestion } from "./ai.parser";
-import config from "../config/config";
 
 // ─────────────────────────────────────────────
 // AI Service — Anthropic Claude integration
@@ -14,7 +13,7 @@ export class AIService {
 
   constructor() {
     this.client = new Anthropic({
-      apiKey: config.ANTHROPIC_API_KEY,
+      apiKey: process.env.ANTHROPIC_API_KEY,
     });
   }
 
@@ -38,6 +37,7 @@ export class AIService {
         max_tokens: 1024,
         messages: [{ role: "user", content: prompt }],
       });
+      console.log("message__ai__", message);
 
       const content = message.content[0];
       if (content.type !== "text") return null;
@@ -52,7 +52,7 @@ export class AIService {
    * Check if the AI service is available (API key is set).
    */
   isAvailable(): boolean {
-    return !!config.ANTHROPIC_API_KEY;
+    return !!process.env.ANTHROPIC_API_KEY;
   }
 }
 
