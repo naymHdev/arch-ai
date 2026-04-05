@@ -1,0 +1,143 @@
+═══════════════════════════════════════════════════════════
+   HOW TO UPDATE YOUR NPM PACKAGE (@naymhdev/arch-ai)
+═══════════════════════════════════════════════════════════
+
+Every time you make changes and want to push a new version
+to NPM, follow these steps in order.
+
+
+───────────────────────────────────────────────────────────
+STEP 1 — Make your code changes
+───────────────────────────────────────────────────────────
+
+Edit whatever files you need inside src/
+When done, save everything.
+
+
+───────────────────────────────────────────────────────────
+STEP 2 — Bump the version number
+───────────────────────────────────────────────────────────
+
+Choose ONE command based on what you changed:
+
+  # Small bug fix (1.0.0 → 1.0.1)
+  npm version patch
+
+  # New feature added (1.0.0 → 1.1.0)
+  npm version minor
+
+  # Big breaking change (1.0.0 → 2.0.0)
+  npm version major
+
+This automatically updates package.json version for you.
+
+
+───────────────────────────────────────────────────────────
+STEP 3 — Build the project
+───────────────────────────────────────────────────────────
+
+  npm run build
+
+Make sure it says no errors.
+Check dist/cli/index.js exists after build.
+
+
+───────────────────────────────────────────────────────────
+STEP 4 — Publish to NPM
+───────────────────────────────────────────────────────────
+
+  npm publish --access public
+
+You will see:
+  npm notice Publishing to https://registry.npmjs.org/
+  + @naymhdev/arch-ai@1.0.1  ✅
+
+
+───────────────────────────────────────────────────────────
+STEP 5 — Push updated code to GitHub
+───────────────────────────────────────────────────────────
+
+  git add .
+  git commit -m "release: v1.0.1"
+  git push origin main
+
+
+───────────────────────────────────────────────────────────
+FULL EXAMPLE (copy & paste this every time)
+───────────────────────────────────────────────────────────
+
+  npm version patch
+  npm run build
+  npm publish --access public
+  git add .
+  git commit -m "release: v1.0.1"
+  git push origin main
+
+
+───────────────────────────────────────────────────────────
+VERIFY YOUR UPDATE IS LIVE
+───────────────────────────────────────────────────────────
+
+Check your package page:
+  https://www.npmjs.com/package/@naymhdev/arch-ai
+
+Test install the new version:
+  npm install -g @naymhdev/arch-ai@latest
+
+Or run directly:
+  npx @naymhdev/arch-ai@latest init
+
+
+───────────────────────────────────────────────────────────
+VERSION NUMBER GUIDE
+───────────────────────────────────────────────────────────
+
+  Format:  MAJOR . MINOR . PATCH
+  Example:   1   .   2   .   3
+
+  PATCH → bug fix, typo fix, small tweak     (1.0.0 → 1.0.1)
+  MINOR → new feature, backward compatible   (1.0.0 → 1.1.0)
+  MAJOR → breaking change, big rewrite       (1.0.0 → 2.0.0)
+
+  NPM RULE: You can NEVER republish the same version number.
+  Always bump before publishing.
+
+
+───────────────────────────────────────────────────────────
+COMMON ERRORS & FIXES
+───────────────────────────────────────────────────────────
+
+ERROR: "You cannot publish over the previously published version"
+FIX:   Run  npm version patch  first, then publish again.
+
+ERROR: "403 Forbidden"
+FIX:   Run  npm login  and re-enter your credentials.
+
+ERROR: "dist/cli/index.js not found"
+FIX:   Run  npm run build  before publishing.
+
+ERROR: "Must be logged in to publish"
+FIX:   Run  npm login  → enter username, password, email.
+
+
+───────────────────────────────────────────────────────────
+CHECK YOUR CURRENT VERSION
+───────────────────────────────────────────────────────────
+
+  # See version in package.json
+  cat package.json | grep version
+
+  # See what is live on NPM right now
+  npm show @naymhdev/arch-ai version
+
+
+═══════════════════════════════════════════════════════════
+   QUICK CHEATSHEET (stick this on your wall)
+═══════════════════════════════════════════════════════════
+
+  1.  npm version patch
+  2.  npm run build
+  3.  npm publish --access public
+  4.  git add . && git commit -m "release" && git push
+
+═══════════════════════════════════════════════════════════
