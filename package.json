@@ -1,5 +1,5 @@
 {
-  "name": "arch-ai",
+  "name": "@naymhdev/arch-ai",
   "version": "1.0.0",
   "description": "AI-powered project structure generator CLI",
   "main": "dist/cli/index.js",
@@ -13,13 +13,6 @@
     "lint": "eslint src/**/*.ts",
     "prepare": "npm run build"
   },
-  "keywords": [
-    "cli",
-    "project-generator",
-    "scaffolding",
-    "ai",
-    "typescript"
-  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
@@ -49,5 +42,16 @@
     "@types/node": "^20.11.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
-  }
+  },
+  "keywords": [
+    "cli",
+    "project-generator",
+    "scaffolding",
+    "ai",
+    "typescript"
+  ],
+  "files": [
+    "dist",
+    "README.md"
+  ]
 }
