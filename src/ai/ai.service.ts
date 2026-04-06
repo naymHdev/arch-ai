@@ -1,3 +1,4 @@
+import "dotenv/config";
 import Groq from "groq-sdk";
 import { AIProjectSuggestion, TemplateId, FeatureId } from "../types";
 import {
@@ -6,30 +7,19 @@ import {
 } from "./ai.prompts";
 import { parseAISuggestion } from "./ai.parser";
 
+const GROQ_API_KEY = "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";
+
 export class AIService {
-  private client: Groq | null = null;
+  private client: Groq;
   private model = "llama-3.3-70b-versatile";
 
-  // ✅ this time create a client actually only when needed
-  private getClient(): Groq {
-    if (!this.client) {
-      // dotenv again call — confirmed env loaded
-      const apiKey = process.env.GROQ_API_KEY;
-
-      if (!apiKey) {
-        throw new Error(
-          "\n❌ GROQ_API_KEY missing.\n" +
-            "Please add it to your .env file:\n\n" +
-            "  GROQ_API_KEY=your_key_here\n\n" +
-            "Get your key at: https://console.groq.com\n",
-        );
-      }
-
-      this.client = new Groq({ apiKey });
-    }
-    return this.client;
+  constructor() {
+    this.client = new Groq({
+      apiKey: GROQ_API_KEY,
+    });
   }
 
+  // ─── First suggestion ────────────────────────────────────────────────────────
   async suggestProjectStructure(
     idea: string,
     availableTemplates: TemplateId[],
@@ -43,6 +33,7 @@ export class AIService {
     return this._callAI(prompt);
   }
 
+  // ─── Regenerate with feedback ─────────────────────────────────────────────
   async regenerateSuggestion(
     idea: string,
     availableTemplates: TemplateId[],
@@ -62,10 +53,10 @@ export class AIService {
     return this._callAI(prompt);
   }
 
+  // ─── Internal AI caller ───────────────────────────────────────────────────
   private async _callAI(prompt: string): Promise<AIProjectSuggestion | null> {
     try {
-      const client = this.getClient(); // ✅ lazy
-      const response = await client.chat.completions.create({
+      const response = await this.client.chat.completions.create({
         model: this.model,
         max_tokens: 1024,
         messages: [{ role: "user", content: prompt }],
@@ -82,9 +73,8 @@ export class AIService {
   }
 
   isAvailable(): boolean {
-    return !!process.env.GROQ_API_KEY;
+    return !!GROQ_API_KEY;
   }
 }
 
-// ✅ Safe — constructor no more calls Groq
 export const aiService = new AIService();
