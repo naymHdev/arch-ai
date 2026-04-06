@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 
-import "dotenv/config";
+import path from "path";
+import dotenv from "dotenv";
+dotenv.config({ path: path.join(process.cwd(), ".env") });
+
 import { Command } from "commander";
 import chalk from "chalk";
 import gradient from "gradient-string";

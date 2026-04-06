@@ -5,7 +5,7 @@
 ## Install
 
 ```bash
-npm install -g arch-ai
+npm install @naymhdev/arch-ai
 # or
 npx arch-ai init
 ```
