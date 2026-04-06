@@ -117,3 +117,9 @@ export interface SpinnerOptions {
   text: string;
   color?: "cyan" | "green" | "yellow" | "red" | "blue" | "magenta";
 }
+
+export type Answers = {
+  projectName: string;
+  template: string;
+  features: string[];
+};

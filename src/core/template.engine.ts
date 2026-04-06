@@ -86,7 +86,7 @@ NODE_ENV=development
 PORT=3000
 
 # Database
-DATABASE_URL=postgresql://user:password@localhost:5432/dbname
+DATABASE_URL=postgresql://user:password@localhost:5432/DB_name
 
 `,
 
