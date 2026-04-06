@@ -103,6 +103,7 @@ export interface AIProjectSuggestion {
   reasoning: string;
   structureNotes?: string;
   additionalRecommendations?: string[];
+  _userFeedback?: string;
 }
 
 export interface GenerationResult {

@@ -1,15 +1,13 @@
 import { TemplateId, FeatureId } from "../types";
 
-// ─────────────────────────────────────────────
-// AI Prompts
-// ─────────────────────────────────────────────
-
 export function buildSuggestionPrompt(
   idea: string,
   availableTemplates: TemplateId[],
   availableFeatures: FeatureId[],
 ): string {
-  return `You are ArchAI, a senior software architect with 10+ years of experience. A developer describes their project idea. Analyze it deeply and recommend the best project template and features.
+  return `You are ArchAI, a senior software architect with 10+ years of experience.
+
+A developer describes their project idea. Analyze it deeply and recommend the best project template and features.
 
 Available templates:
 ${availableTemplates.map((t) => `- ${t}`).join("\n")}
@@ -17,25 +15,10 @@ ${availableTemplates.map((t) => `- ${t}`).join("\n")}
 Available features:
 ${availableFeatures.map((f) => `- ${f}`).join("\n")}
 
-Template selection rules:
-- "backend-modular" → production app with many features, role-based access, real users
-- "backend-microservice" → distributed system, multiple services, high scale
-- "backend-clean" → enterprise app, team project, complex business logic
-- "backend-mvp" → simple REST API, quick prototype, solo developer
-- "nextjs-saas" → SaaS product with subscriptions and billing
-- "nextjs-basic" → simple website, landing page, portfolio
-- "nextjs-ddd" → complex web app with rich domain logic
-
 Developer's project idea:
 "${idea}"
 
-Analyze:
-1. Scale (small/medium/large)
-2. Users (solo/team/public)
-3. Features needed
-4. Complexity
-
-Respond ONLY with a valid JSON object (no markdown, no explanation) matching this exact shape:
+Respond ONLY with valid JSON (no markdown, no explanation):
 {
   "suggestedTemplate": "<template-id>",
   "suggestedFeatures": ["<feature-id>"],
@@ -45,11 +28,46 @@ Respond ONLY with a valid JSON object (no markdown, no explanation) matching thi
 }`;
 }
 
-export function buildStructureNotePrompt(
-  template: TemplateId,
-  features: FeatureId[],
+// ─── NEW — Regenerate prompt with user feedback ───────────────────────────────
+export function buildRegenerateSuggestionPrompt(
+  idea: string,
+  availableTemplates: TemplateId[],
+  availableFeatures: FeatureId[],
+  previousSuggestion: { template: string; features: string[] },
+  userFeedback: string,
+  attemptNumber: number,
 ): string {
-  return `You are ArchAI, an expert software architect. Give a short note (2-3 sentences max) about best practices for using the "${template}" template with these features: ${features.join(", ")}.
+  return `You are ArchAI, a senior software architect.
 
-Respond in plain text only, no markdown.`;
+A developer rejected your previous suggestion and gave feedback. Generate a NEW and DIFFERENT suggestion based on their feedback.
+
+Original project idea:
+"${idea}"
+
+Your previous suggestion (attempt #${attemptNumber}):
+- Template: ${previousSuggestion.template}
+- Features: ${previousSuggestion.features.join(", ")}
+
+Developer's feedback on why they rejected it:
+"${userFeedback}"
+
+Available templates:
+${availableTemplates.map((t) => `- ${t}`).join("\n")}
+
+Available features:
+${availableFeatures.map((f) => `- ${f}`).join("\n")}
+
+Rules:
+1. Do NOT suggest the same template as before unless the feedback specifically asks for it
+2. Carefully consider the developer's feedback
+3. Adjust features based on what they said
+
+Respond ONLY with valid JSON (no markdown, no explanation):
+{
+  "suggestedTemplate": "<template-id>",
+  "suggestedFeatures": ["<feature-id>"],
+  "reasoning": "<explain how you addressed their feedback>",
+  "structureNotes": "<specific architecture advice>",
+  "additionalRecommendations": ["<tip1>", "<tip2>", "<tip3>"]
+}`;
 }

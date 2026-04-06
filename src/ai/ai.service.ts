@@ -1,8 +1,12 @@
 import "dotenv/config";
 import Groq from "groq-sdk";
 import { AIProjectSuggestion, TemplateId, FeatureId } from "../types";
-import { buildSuggestionPrompt } from "./ai.prompts";
+import {
+  buildSuggestionPrompt,
+  buildRegenerateSuggestionPrompt,
+} from "./ai.prompts";
 import { parseAISuggestion } from "./ai.parser";
+import config from "../config/config";
 
 export class AIService {
   private client: Groq;
@@ -10,10 +14,11 @@ export class AIService {
 
   constructor() {
     this.client = new Groq({
-      apiKey: process.env.GROQ_API_KEY,
+      apiKey: config.groq_api_key,
     });
   }
 
+  // ─── First suggestion ────────────────────────────────────────────────────────
   async suggestProjectStructure(
     idea: string,
     availableTemplates: TemplateId[],
@@ -24,7 +29,31 @@ export class AIService {
       availableTemplates,
       availableFeatures,
     );
+    return this._callAI(prompt);
+  }
 
+  // ─── Regenerate with feedback ─────────────────────────────────────────────
+  async regenerateSuggestion(
+    idea: string,
+    availableTemplates: TemplateId[],
+    availableFeatures: FeatureId[],
+    previousSuggestion: { template: string; features: string[] },
+    userFeedback: string,
+    attemptNumber: number,
+  ): Promise<AIProjectSuggestion | null> {
+    const prompt = buildRegenerateSuggestionPrompt(
+      idea,
+      availableTemplates,
+      availableFeatures,
+      previousSuggestion,
+      userFeedback,
+      attemptNumber,
+    );
+    return this._callAI(prompt);
+  }
+
+  // ─── Internal AI caller ───────────────────────────────────────────────────
+  private async _callAI(prompt: string): Promise<AIProjectSuggestion | null> {
     try {
       const response = await this.client.chat.completions.create({
         model: this.model,
@@ -43,7 +72,7 @@ export class AIService {
   }
 
   isAvailable(): boolean {
-    return !!process.env.GROQ_API_KEY;
+    return !!config.groq_api_key;
   }
 }
 
