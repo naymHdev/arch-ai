@@ -132,9 +132,13 @@ export async function initCommand(): Promise<void> {
         selectedTemplate = await promptTemplateSelection();
       }
     } else {
+      // spinnerFail(
+      //   spinner,
+      //   "AI unavailable (no ANTHROPIC_API_KEY or request failed). Falling back to manual.",
+      // );
       spinnerFail(
         spinner,
-        "AI unavailable (no ANTHROPIC_API_KEY or request failed). Falling back to manual.",
+        "AI unavailable (no GROQ_API_KEY or request failed). Falling back to manual.",
       );
       logger.blank();
       selectedTemplate = await promptTemplateSelection();

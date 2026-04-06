@@ -17,6 +17,7 @@
   "license": "MIT",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.20.0",
+    "@google/generative-ai": "^0.24.1",
     "boxen": "^5.1.2",
     "chalk": "^4.1.2",
     "commander": "^11.1.0",
@@ -26,6 +27,7 @@
     "figlet": "^1.7.0",
     "fs-extra": "^11.2.0",
     "gradient-string": "^2.0.2",
+    "groq-sdk": "^1.1.2",
     "helmet": "^8.1.0",
     "inquirer": "^8.2.6",
     "morgan": "^1.10.1",
@@ -39,7 +41,7 @@
     "@types/gradient-string": "^1.1.6",
     "@types/inquirer": "^8.2.10",
     "@types/morgan": "^1.9.10",
-    "@types/node": "^20.11.0",
+    "@types/node": "^25.5.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   },

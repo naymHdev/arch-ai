@@ -29,7 +29,8 @@ export type TemplateId =
   | "backend-microservice"
   | "nextjs-basic"
   | "nextjs-ddd"
-  | "nextjs-saas";
+  | "nextjs-saas"
+  | "backend-modular";
 
 export type FeatureId =
   | "auth"

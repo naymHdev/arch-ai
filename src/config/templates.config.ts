@@ -5,6 +5,114 @@ import { TemplateConfig, TemplateId } from "../types";
 // ─────────────────────────────────────────────
 
 export const TEMPLATES: Record<TemplateId, TemplateConfig> = {
+  "backend-modular": {
+    id: "backend-modular",
+    name: "Backend Modular",
+    description:
+      "Feature-based modular architecture — production grade with role-based auth.",
+    category: "backend",
+    tags: ["express", "typescript", "modular", "rbac", "production"],
+    defaultFeatures: ["auth", "testing", "docker"],
+    compatibleFeatures: [
+      "auth",
+      "email",
+      "storage",
+      "cache",
+      "queue",
+      "testing",
+      "docker",
+      "ci-cd",
+    ],
+    structure: {
+      name: "root",
+      type: "dir",
+      children: [
+        {
+          name: "src",
+          type: "dir",
+          children: [
+            {
+              name: "modules",
+              type: "dir",
+              description: "Feature modules",
+              children: [
+                {
+                  name: "auth",
+                  type: "dir",
+                  children: [
+                    { name: "auth.controller.ts", type: "file" },
+                    { name: "auth.service.ts", type: "file" },
+                    { name: "auth.routes.ts", type: "file" },
+                    { name: "auth.validation.ts", type: "file" },
+                    { name: "auth.interface.ts", type: "file" },
+                  ],
+                },
+                {
+                  name: "user",
+                  type: "dir",
+                  children: [
+                    { name: "user.controller.ts", type: "file" },
+                    { name: "user.service.ts", type: "file" },
+                    { name: "user.routes.ts", type: "file" },
+                    { name: "user.model.ts", type: "file" },
+                    { name: "user.validation.ts", type: "file" },
+                    { name: "user.interface.ts", type: "file" },
+                  ],
+                },
+                {
+                  name: "admin",
+                  type: "dir",
+                  children: [
+                    { name: "admin.controller.ts", type: "file" },
+                    { name: "admin.routes.ts", type: "file" },
+                    { name: "admin.validation.ts", type: "file" },
+                  ],
+                },
+              ],
+            },
+            {
+              name: "middlewares",
+              type: "dir",
+              children: [
+                { name: "auth.ts", type: "file" },
+                { name: "validateRequest.ts", type: "file" },
+                { name: "globalErrorHandler.ts", type: "file" },
+                { name: "notFound.ts", type: "file" },
+              ],
+            },
+            {
+              name: "utils",
+              type: "dir",
+              children: [
+                { name: "catchAsync.ts", type: "file" },
+                { name: "sendResponse.ts", type: "file" },
+                { name: "AppError.ts", type: "file" },
+              ],
+            },
+            {
+              name: "routes",
+              type: "dir",
+              children: [
+                {
+                  name: "index.ts",
+                  type: "file",
+                  description: "All module routes registered here",
+                },
+              ],
+            },
+            { name: "config", type: "dir" },
+            { name: "interface", type: "dir" },
+            { name: "app.ts", type: "file" },
+            { name: "server.ts", type: "file" },
+          ],
+        },
+        { name: ".env.example", type: "file" },
+        { name: "package.json", type: "file" },
+        { name: "tsconfig.json", type: "file" },
+      ],
+    },
+  },
+
   "backend-mvp": {
     id: "backend-mvp",
     name: "Backend MVP",

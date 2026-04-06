@@ -9,7 +9,7 @@ export function buildSuggestionPrompt(
   availableTemplates: TemplateId[],
   availableFeatures: FeatureId[],
 ): string {
-  return `You are ArchAI, an expert software architect. A developer describes their project idea and you recommend the best project template and features.
+  return `You are ArchAI, a senior software architect with 10+ years of experience. A developer describes their project idea. Analyze it deeply and recommend the best project template and features.
 
 Available templates:
 ${availableTemplates.map((t) => `- ${t}`).join("\n")}
@@ -17,16 +17,31 @@ ${availableTemplates.map((t) => `- ${t}`).join("\n")}
 Available features:
 ${availableFeatures.map((f) => `- ${f}`).join("\n")}
 
+Template selection rules:
+- "backend-modular" → production app with many features, role-based access, real users
+- "backend-microservice" → distributed system, multiple services, high scale
+- "backend-clean" → enterprise app, team project, complex business logic
+- "backend-mvp" → simple REST API, quick prototype, solo developer
+- "nextjs-saas" → SaaS product with subscriptions and billing
+- "nextjs-basic" → simple website, landing page, portfolio
+- "nextjs-ddd" → complex web app with rich domain logic
+
 Developer's project idea:
 "${idea}"
 
+Analyze:
+1. Scale (small/medium/large)
+2. Users (solo/team/public)
+3. Features needed
+4. Complexity
+
 Respond ONLY with a valid JSON object (no markdown, no explanation) matching this exact shape:
 {
-  "suggestedTemplate": "<one of the available template ids>",
-  "suggestedFeatures": ["<feature-id>", ...],
-  "reasoning": "<1-2 sentence explanation of why this template fits>",
-  "structureNotes": "<optional: any structural advice specific to this project>",
-  "additionalRecommendations": ["<optional extra tips>"]
+  "suggestedTemplate": "<template-id>",
+  "suggestedFeatures": ["<feature-id>"],
+  "reasoning": "<2 sentence explanation>",
+  "structureNotes": "<specific architecture advice>",
+  "additionalRecommendations": ["<tip1>", "<tip2>"]
 }`;
 }
 

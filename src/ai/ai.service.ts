@@ -1,25 +1,19 @@
-import Anthropic from "@anthropic-ai/sdk";
+import "dotenv/config";
+import Groq from "groq-sdk";
 import { AIProjectSuggestion, TemplateId, FeatureId } from "../types";
 import { buildSuggestionPrompt } from "./ai.prompts";
 import { parseAISuggestion } from "./ai.parser";
 
-// ─────────────────────────────────────────────
-// AI Service — Anthropic Claude integration
-// ─────────────────────────────────────────────
-
 export class AIService {
-  private client: Anthropic;
-  private model = "claude-sonnet-4-20250514";
+  private client: Groq;
+  private model = "llama-3.3-70b-versatile";
 
   constructor() {
-    this.client = new Anthropic({
-      apiKey: process.env.ANTHROPIC_API_KEY,
+    this.client = new Groq({
+      apiKey: process.env.GROQ_API_KEY,
     });
   }
 
-  /**
-   * Suggest the best template and features for a project idea.
-   */
   async suggestProjectStructure(
     idea: string,
     availableTemplates: TemplateId[],
@@ -32,27 +26,24 @@ export class AIService {
     );
 
     try {
-      const message = await this.client.messages.create({
+      const response = await this.client.chat.completions.create({
         model: this.model,
         max_tokens: 1024,
         messages: [{ role: "user", content: prompt }],
       });
-      console.log("message__ai__", message);
 
-      const content = message.content[0];
-      if (content.type !== "text") return null;
+      const text = response.choices[0]?.message?.content;
+      if (!text) return null;
 
-      return parseAISuggestion(content.text);
-    } catch {
+      return parseAISuggestion(text);
+    } catch (err: any) {
+      console.error("❌ Groq Error:", err?.message ?? err);
       return null;
     }
   }
 
-  /**
-   * Check if the AI service is available (API key is set).
-   */
   isAvailable(): boolean {
-    return !!process.env.ANTHROPIC_API_KEY;
+    return !!process.env.GROQ_API_KEY;
   }
 }
 
