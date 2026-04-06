@@ -1,6 +1,6 @@
 {
   "name": "@naymhdev/arch-ai",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "AI-powered project structure generator CLI",
   "main": "dist/cli/index.js",
   "bin": {
