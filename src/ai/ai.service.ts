@@ -1,5 +1,4 @@
 import "dotenv/config";
-import Groq from "groq-sdk";
 import { AIProjectSuggestion, TemplateId, FeatureId } from "../types";
 import {
   buildSuggestionPrompt,
@@ -7,33 +6,42 @@ import {
 } from "./ai.prompts";
 import { parseAISuggestion } from "./ai.parser";
 
-const GROQ_API_KEY = "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";
+// ─── Detect which AI provider is available ────────────────────────
+function getAvailableProvider(): {
+  name: string;
+  key: string;
+} | null {
+  if (process.env.GROQ_API_KEY) {
+    return { name: "groq", key: process.env.GROQ_API_KEY };
+  }
+  if (process.env.ANTHROPIC_API_KEY) {
+    return { name: "anthropic", key: process.env.ANTHROPIC_API_KEY };
+  }
+  if (process.env.GEMINI_API_KEY) {
+    return { name: "gemini", key: process.env.GEMINI_API_KEY };
+  }
+  return null;
+}
 
 export class AIService {
-  private client: Groq;
   private model = "llama-3.3-70b-versatile";
 
-  constructor() {
-    this.client = new Groq({
-      apiKey: GROQ_API_KEY,
-    });
-  }
-
-  // ─── First suggestion ────────────────────────────────────────────────────────
   async suggestProjectStructure(
     idea: string,
     availableTemplates: TemplateId[],
     availableFeatures: FeatureId[],
   ): Promise<AIProjectSuggestion | null> {
+    const provider = getAvailableProvider();
+    if (!provider) return null;
+
     const prompt = buildSuggestionPrompt(
       idea,
       availableTemplates,
       availableFeatures,
     );
-    return this._callAI(prompt);
+    return this._callAI(prompt, provider);
   }
 
-  // ─── Regenerate with feedback ─────────────────────────────────────────────
   async regenerateSuggestion(
     idea: string,
     availableTemplates: TemplateId[],
@@ -42,6 +50,9 @@ export class AIService {
     userFeedback: string,
     attemptNumber: number,
   ): Promise<AIProjectSuggestion | null> {
+    const provider = getAvailableProvider();
+    if (!provider) return null;
+
     const prompt = buildRegenerateSuggestionPrompt(
       idea,
       availableTemplates,
@@ -50,30 +61,64 @@ export class AIService {
       userFeedback,
       attemptNumber,
     );
-    return this._callAI(prompt);
+    return this._callAI(prompt, provider);
   }
 
-  // ─── Internal AI caller ───────────────────────────────────────────────────
-  private async _callAI(prompt: string): Promise<AIProjectSuggestion | null> {
+  private async _callAI(
+    prompt: string,
+    provider: { name: string; key: string },
+  ): Promise<AIProjectSuggestion | null> {
     try {
-      const response = await this.client.chat.completions.create({
-        model: this.model,
-        max_tokens: 1024,
-        messages: [{ role: "user", content: prompt }],
-      });
+      if (provider.name === "groq") {
+        const { default: Groq } = await import("groq-sdk");
+        const client = new Groq({ apiKey: provider.key });
+        const response = await client.chat.completions.create({
+          model: "llama-3.3-70b-versatile",
+          max_tokens: 1024,
+          messages: [{ role: "user", content: prompt }],
+        });
+        const text = response.choices[0]?.message?.content;
+        if (!text) return null;
+        return parseAISuggestion(text);
+      }
 
-      const text = response.choices[0]?.message?.content;
-      if (!text) return null;
+      if (provider.name === "anthropic") {
+        const Anthropic = (await import("@anthropic-ai/sdk")).default;
+        const client = new Anthropic({ apiKey: provider.key });
+        const message = await client.messages.create({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1024,
+          messages: [{ role: "user", content: prompt }],
+        });
+        const content = message.content[0];
+        if (content.type !== "text") return null;
+        return parseAISuggestion(content.text);
+      }
 
-      return parseAISuggestion(text);
+      if (provider.name === "gemini") {
+        const { GoogleGenerativeAI } = await import("@google/generative-ai");
+        const client = new GoogleGenerativeAI(provider.key);
+        const model = client.getGenerativeModel({
+          model: "gemini-2.0-flash",
+          generationConfig: { responseMimeType: "application/json" },
+        });
+        const result = await model.generateContent(prompt);
+        return parseAISuggestion(result.response.text());
+      }
+
+      return null;
     } catch (err: any) {
-      console.error("❌ Groq Error:", err?.message ?? err);
+      console.error("❌ AI Error:", err?.message ?? err);
       return null;
     }
   }
 
   isAvailable(): boolean {
-    return !!GROQ_API_KEY;
+    return getAvailableProvider() !== null;
+  }
+
+  getProviderName(): string | null {
+    return getAvailableProvider()?.name ?? null;
   }
 }
 

@@ -1,3 +1,5 @@
+// npx ts-node test-ai.ts
+
 import "dotenv/config";
 import Groq from "groq-sdk";
 

@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 
-import path from "path";
-import dotenv from "dotenv";
-dotenv.config({ path: path.join(process.cwd(), ".env") });
+// ─── Load .env from CURRENT WORKING DIRECTORY (for user's project) ───
+import { config } from "dotenv";
+import { resolve } from "path";
+
+config({ path: resolve(process.cwd(), ".env") });
+config({ path: resolve(process.env.HOME ?? "~", ".arch-ai", ".env") });
 
 import { Command } from "commander";
 import chalk from "chalk";
